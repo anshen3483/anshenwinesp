@@ -48,7 +48,7 @@ jobs:
 
       - name: Generate AnshenWin Logo
         run: |
-          test -f icon-only.png
+          test -f icon-only.png.JPG
           sudo apt-get update
           sudo apt-get install -y imagemagick
 
