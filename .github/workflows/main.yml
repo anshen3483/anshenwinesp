@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build AnshenWin APK
 
 on:
   workflow_dispatch:
@@ -45,6 +45,41 @@ jobs:
 
       - name: Add Android Platform
         run: npx cap add android
+
+      - name: Generate AnshenWin Logo
+        run: |
+          test -f icon-only.png
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+
+          mkdir -p android/app/src/main/res/drawable-nodpi
+          mkdir -p android/app/src/main/res/values
+          mkdir -p android/app/src/main/res/mipmap-anydpi-v26
+
+          magick icon-only.png -resize 432x432^ -gravity center -extent 432x432 android/app/src/main/res/drawable-nodpi/ic_launcher_foreground.png
+
+          for item in "mdpi:48" "hdpi:72" "xhdpi:96" "xxhdpi:144" "xxxhdpi:192"; do
+            density="${item%%:*}"
+            size="${item##*:}"
+            mkdir -p "android/app/src/main/res/mipmap-${density}"
+            magick icon-only.png -resize "${size}x${size}!" "android/app/src/main/res/mipmap-${density}/ic_launcher.png"
+            cp "android/app/src/main/res/mipmap-${density}/ic_launcher.png" "android/app/src/main/res/mipmap-${density}/ic_launcher_round.png"
+          done
+
+          cat > android/app/src/main/res/values/ic_launcher_background.xml <<'EOF'
+          <resources>
+            <color name="ic_launcher_background">#080510</color>
+          </resources>
+          EOF
+
+          cat > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+            <background android:drawable="@color/ic_launcher_background"/>
+            <foreground android:drawable="@drawable/ic_launcher_foreground"/>
+          </adaptive-icon>
+          EOF
+
+          cp android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
 
       - name: Sync Android
         run: npx cap sync android
