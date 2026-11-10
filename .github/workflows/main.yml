@@ -12,7 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
       - name: Checkout Repository
@@ -22,6 +22,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -34,52 +35,23 @@ jobs:
 
       - name: Install Capacitor
         run: |
-          npm install @capacitor/core @capacitor/android --legacy-peer-deps
-          npm install -D @capacitor/cli --legacy-peer-deps
+          npm install @capacitor/core@7 @capacitor/android@7 --legacy-peer-deps
+          npm install -D @capacitor/cli@7 --legacy-peer-deps
 
       - name: Build React App
         run: npm run build
 
-      - name: Initialize Android
-        run: npx cap init "AnshenWin" "com.anshenwin.app" --web-dir dist
+      - name: Initialize Capacitor
+        run: |
+          if [ ! -f capacitor.config.ts ] && [ ! -f capacitor.config.json ] && [ ! -f capacitor.config.js ]; then
+            npx cap init "AnshenWin" "com.anshenwin.app" --web-dir dist
+          fi
 
       - name: Add Android Platform
-        run: npx cap add android
-
-      - name: Generate AnshenWin Logo
         run: |
-          test -f icon-only.png.JPG
-          sudo apt-get update
-          sudo apt-get install -y imagemagick
-
-          mkdir -p android/app/src/main/res/drawable-nodpi
-          mkdir -p android/app/src/main/res/values
-          mkdir -p android/app/src/main/res/mipmap-anydpi-v26
-
-          magick icon-only.png -resize 432x432^ -gravity center -extent 432x432 android/app/src/main/res/drawable-nodpi/ic_launcher_foreground.png
-
-          for item in "mdpi:48" "hdpi:72" "xhdpi:96" "xxhdpi:144" "xxxhdpi:192"; do
-            density="${item%%:*}"
-            size="${item##*:}"
-            mkdir -p "android/app/src/main/res/mipmap-${density}"
-            magick icon-only.png -resize "${size}x${size}!" "android/app/src/main/res/mipmap-${density}/ic_launcher.png"
-            cp "android/app/src/main/res/mipmap-${density}/ic_launcher.png" "android/app/src/main/res/mipmap-${density}/ic_launcher_round.png"
-          done
-
-          cat > android/app/src/main/res/values/ic_launcher_background.xml <<'EOF'
-          <resources>
-            <color name="ic_launcher_background">#080510</color>
-          </resources>
-          EOF
-
-          cat > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
-          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-            <background android:drawable="@color/ic_launcher_background"/>
-            <foreground android:drawable="@drawable/ic_launcher_foreground"/>
-          </adaptive-icon>
-          EOF
-
-          cp android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+          if [ ! -d android ]; then
+            npx cap add android
+          fi
 
       - name: Sync Android
         run: npx cap sync android
@@ -95,4 +67,4 @@ jobs:
         with:
           name: AnshenWin-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 7
+          retention-days: 30
