@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+@layer base {
+  html,
+  body {
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    background-color: #080a0f;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Prevent mobile browser auto-zoom when focusing inputs on screens < 768px */
+  @media (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+}
+
+/* Safe-area utilities for Android punch-hole cameras & gesture bars */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Clean touch momentum scroll without visible scrollbars */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes anshenShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes fireGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(255, 102, 0, 0.6)) drop-shadow(0 0 12px rgba(0, 255, 102, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(255, 170, 0, 0.85)) drop-shadow(0 0 18px rgba(0, 255, 102, 0.6));
+  }
+}
+
+@keyframes flameFlicker {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-3deg);
+  }
+  50% {
+    transform: scale(0.95) rotate(2deg);
+  }
+  75% {
+    transform: scale(1.06) rotate(-1.5deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes credentialFlashBurst {
+  0% {
+    transform: scale(0.985);
+    box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.9), inset 0 0 28px rgba(0, 255, 102, 0.65);
+    background-color: rgba(0, 255, 102, 0.32);
+    border-color: #00ff66;
+  }
+  35% {
+    transform: scale(1.015);
+    box-shadow: 0 0 24px 6px rgba(0, 255, 102, 0.45), inset 0 0 18px rgba(0, 255, 102, 0.35);
+    background-color: rgba(0, 255, 102, 0.18);
+    border-color: #6ee7b7;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 12px rgba(0, 255, 102, 0), inset 0 0 0 rgba(0, 255, 102, 0);
+  }
+}
+
+@keyframes credentialSweepBeam {
+  0% {
+    transform: translateX(-120%) skewX(-20deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(220%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+.animate-anshen-shimmer {
+  background-size: 200% auto;
+  animation: anshenShimmer 3s linear infinite;
+}
+
+.animate-fire-glow {
+  animation: fireGlow 2.2s ease-in-out infinite;
+}
+
+.animate-flame-flicker {
+  animation: flameFlicker 1.6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-credential-flash {
+  animation: credentialFlashBurst 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-credential-sweep {
+  animation: credentialSweepBeam 0.6s ease-out forwards;
+}

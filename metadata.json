@@ -1,0 +1,6 @@
+{
+  "name": "AnshenWin - Free Fire Solo Tournament App",
+  "description": "Production-ready Free Fire Solo Tournament Android App in Flutter with Dark Gaming Theme, match registration, Room ID/Password copy, and Admin match publishing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
